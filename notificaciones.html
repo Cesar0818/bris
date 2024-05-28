@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://apis.google.com/js/api.js"></script>
     <meta name="google-signin-client_id" content="239778569936-gl0h772bvngls0qkqsl0g13441uk8ajq.apps.googleusercontent.com">
-
-
-    <title>Notificaciones/title>
+    <title>Notificaciones</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -160,30 +158,23 @@
         <form id="reminder-form">
             <label for="medication-name">Nombre del Medicamento:</label>
             <input type="text" id="medication-name" required>
-
             <label for="dose-time">Hora de la Dosis:</label>
             <input type="time" id="dose-time" required>
-
             <label for="regularity">Regularidad:</label>
             <select id="regularity" onchange="toggleOtherRegularity()" required>
                 <option value="diario">Diario</option>
                 <option value="otro">Otro</option>
             </select>
-
             <div id="other-regularity-container" style="display: none;">
                 <label for="other-regularity">Especificar Regularidad (días):</label>
                 <input type="number" id="other-regularity" min="1">
             </div>
-
             <label for="units">Unidades por Dosis:</label>
             <input type="number" id="units" required min="1">
-
             <label for="start-date">Fecha de Inicio:</label>
             <input type="date" id="start-date" required>
-
             <label for="end-date">Fecha de Fin:</label>
             <input type="date" id="end-date" required>
-
             <button type="submit">GUARDAR</button>
         </form>
     </div>
@@ -207,58 +198,65 @@
             </div>
         </a>
     </div>
-
     <script>
         // Configuración de la API de Google Calendar
         function initClient() {
-          gapi.client.init({
-            apiKey: 'TU_API_KEY',
-            clientId: 'TU_CLIENT_ID.apps.googleusercontent.com',
-            discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
-            scope: 'https://www.googleapis.com/auth/calendar'
-          }).then(function () {
-            // Escucha el evento de clic en el botón GUARDAR
-            document.getElementById('reminder-form').addEventListener('submit', handleFormSubmit);
-          });
+            gapi.client.init({
+                apiKey: 'AIzaSyD1YdEpyE09LJEkcU3YRf_lTXglxkKXweA',
+                clientId: '239778569936-7duen33o4h51sn93vqb5gdfmkt06e13f.apps.googleusercontent.com',
+                discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
+                scope: 'https://www.googleapis.com/auth/calendar'
+            }).then(function () {
+                // Escucha el evento de clic en el botón GUARDAR
+                document.getElementById('reminder-form').addEventListener('submit', handleFormSubmit);
+            });
         }
-      
+
         // Maneja el envío del formulario
         function handleFormSubmit(event) {
-          event.preventDefault();
-          // Autentica al usuario
-          gapi.auth2.getAuthInstance().signIn().then(function () {
-            // Luego de autenticar al usuario, llama a la función que guarda el evento en el calendario
-            saveEventToCalendar();
-          });
+            event.preventDefault();
+            // Autentica al usuario
+            gapi.auth2.getAuthInstance().signIn().then(function () {
+                // Luego de autenticar al usuario, llama a la función que guarda el evento en el calendario
+                saveEventToCalendar();
+            });
         }
-      
+
         // Guarda un evento en el calendario del usuario
         function saveEventToCalendar() {
-          var event = {
-            'summary': document.getElementById('medication-name').value,
-            'start': {
-              'dateTime': document.getElementById('start-date').value + 'T' + document.getElementById('dose-time').value,
-              'timeZone': 'America/New_York'
-            },
-            'end': {
-              'dateTime': document.getElementById('end-date').value + 'T' + document.getElementById('dose-time').value,
-              'timeZone': 'America/New_York'
-            }
-          };
-      
-          var request = gapi.client.calendar.events.insert({
-            'calendarId': 'primary',
-            'resource': event
-          });
-      
-          request.execute(function (event) {
-            alert('Evento guardado en el calendario: ' + event.htmlLink);
-          });
-        }
-      </script>
-      <script src="https://apis.google.com/js/api.js?onload=initClient"></script>
+            var event = {
+                'summary': document.getElementById('medication-name').value,
+                'start': {
+                    'dateTime': document.getElementById('start-date').value + 'T' + document.getElementById('dose-time').value + ':00',
+                    'timeZone': 'America/New_York'
+                },
+                'end': {
+                    'dateTime': document.getElementById('end-date').value + 'T' + document.getElementById('dose-time').value + ':00',
+                    'timeZone': 'America/New_York'
+                }
+            };
 
-      
-    
+            var request = gapi.client.calendar.events.insert({
+                'calendarId': 'primary',
+                'resource': event
+            });
+
+            request.execute(function (event) {
+                alert('Evento guardado en el calendario: ' + event.htmlLink);
+            });
+        }
+
+        function toggleOtherRegularity() {
+            var regularity = document.getElementById('regularity').value;
+            var otherRegularityContainer = document.getElementById('other-regularity-container');
+            if (regularity === 'otro') {
+                otherRegularityContainer.style.display = 'block';
+            } else {
+                otherRegularityContainer.style.display = 'none';
+            }
+        }
+
+        gapi.load('client:auth2', initClient);
+    </script>
 </body>
 </html>
